@@ -5,18 +5,22 @@ from email.MIMEBase import MIMEBase
 from email.mime.text import MIMEText
 from email import Encoders
 
-import tempfile
 import os
 import subprocess
 
 def pdf2html(data):
-    infp = tempfile.NamedTemporaryFile()
-    filename = os.path.basename(infp.name) + ".html"
-    infp.file.write(data)
-    subprocess.call(["/usr/bin/pdf2htmlEX", infp.name, filename], cwd="/tmp")
-    outfp = file("/tmp/" + filename, 'rb')
+    base = "eboks_" + str(os.getpid())
+    ifile = filename + ".pdf"
+    ofile = filename + ".html"
+    infp = file("/tmp/" + ifile, 'rw')
+    infp.write(data)
+    infp.close()
+    subprocess.call(["/usr/bin/pdf2htmlEX", ifile, ofile], cwd="/tmp")
+    outfp = file("/tmp/" + ofile, 'r')
     res = outfp.read()
     outfp.close()
+    os.remove("/tmp/" + ifile)
+    os.remove("/tmp/" + gfile)
     return res
 
 class Backend(object):

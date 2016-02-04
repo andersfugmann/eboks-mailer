@@ -9,7 +9,7 @@ import tempfile
 import os
 import subprocess
 
-def pdf2html2(data):
+def pdf2html(data):
     infp = tempfile.NamedTemporaryFile()
     filename = os.path.basename(infp.name) + ".html"
     print "output is:", filename

@@ -12,12 +12,8 @@ import subprocess
 def pdf2html(data):
     infp = tempfile.NamedTemporaryFile()
     filename = os.path.basename(infp.name) + ".html"
-    print "output is:", filename
     infp.file.write(data)
-    subprocess.call(["ls", "-l", "/tmp"])
-    p = ["/usr/bin/pdf2htmlEX", "/tmp/test.pdf", filename]
-    print "P: ", p
-    subprocess.call(p, cwd="/tmp")
+    subprocess.call(["/usr/bin/pdf2htmlEX", infp.name, filename], cwd="/tmp")
     outfp = file("/tmp/" + filename, 'rb')
     res = outfp.read()
     outfp.close()

@@ -5,28 +5,21 @@ from email.MIMEBase import MIMEBase
 from email.mime.text import MIMEText
 from email import Encoders
 
-import StringIO
-import pdfminer.pdfinterp
-import pdfminer.pdfpage
-import pdfminer.converter
+import tempfile
+import os
+import subprocess
 
-# Pdf conversion to HTML so the mails have a body
-def pdf2html(data):
-    outfp = StringIO.StringIO()
-    infp = StringIO.StringIO(data)
-    rsrcmgr = pdfminer.pdfinterp.PDFResourceManager(caching=True)
-    device = pdfminer.converter.HTMLConverter(rsrcmgr, outfp, codec='utf-8', scale=1,
-                           layoutmode='normal',
-                           laparams=pdfminer.layout.LAParams(),
-                           imagewriter=None)
-    interpreter = pdfminer.pdfinterp.PDFPageInterpreter(rsrcmgr, device)
-    for page in pdfminer.pdfpage.PDFPage.get_pages(infp, set(),
-                                                   maxpages=0, password=None,
-                                                   caching=True, check_extractable=True):
-        interpreter.process_page(page)
-
-    device.close()
-    res = outfp.getvalue()
+def pdf2html2(data):
+    infp = tempfile.NamedTemporaryFile()
+    filename = os.path.basename(infp.name) + ".html"
+    print "output is:", filename
+    infp.file.write(data)
+    subprocess.call(["ls", "-l", "/tmp"])
+    p = ["/usr/bin/pdf2htmlEX", "/tmp/test.pdf", filename]
+    print "P: ", p
+    subprocess.call(p, cwd="/tmp")
+    outfp = file("/tmp/" + filename, 'rb')
+    res = outfp.read()
     outfp.close()
     return res
 
